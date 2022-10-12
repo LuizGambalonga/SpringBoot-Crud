@@ -18,16 +18,23 @@ public class UsuarioModel extends Pessoa{
 	
 	@Column
 	private Integer i_databases;
+	@Column
+	private String usuario;
+	@Column
+	private String senha;
 	
 	public UsuarioModel() {
 		
 	}
 	
-	public UsuarioModel(Long i_usuario, Integer i_databases) {
+	public UsuarioModel(Long i_usuario, Integer i_databases, String usuario, String senha) {
 		super();
 		this.i_usuario = i_usuario;
 		this.i_databases = i_databases;
+		this.usuario = usuario;
+		this.senha = senha;
 	}
+
 
 	public Long getI_usuario() {
 		return i_usuario;
@@ -45,10 +52,26 @@ public class UsuarioModel extends Pessoa{
 		this.i_databases = i_databases;
 	}
 
-	@Override
-	public String toString() {
-		return "UsuarioModel [i_usuario=" + i_usuario + ", i_databases=" + i_databases + "]";
+	public String getUsuario() {
+		return usuario;
 	}
 
+	public void setUsuario(String usuario) {
+		this.usuario = usuario;
+	}
+
+	public String getSenha() {
+		return senha;
+	}
+
+	public void setSenha(String senha) {
+		this.senha = senha;
+	}
+
+	@Override
+	public String toString() {
+		return "UsuarioModel [i_usuario=" + i_usuario + ", i_databases=" + i_databases + ", usuario=" + usuario
+				+ ", senha=" + senha + "]";
+	}
 	
 }

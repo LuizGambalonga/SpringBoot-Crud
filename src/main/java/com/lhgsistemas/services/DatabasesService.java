@@ -1,12 +1,17 @@
 package com.lhgsistemas.services;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
+import javax.persistence.EntityNotFoundException;
+
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import com.lhgsistemas.exception.EntidadeEmUso;
 import com.lhgsistemas.exception.RecursoNaoLocalizado;
@@ -40,19 +45,42 @@ public class DatabasesService {
 	 	
 	}
 	
-	public Optional<DatabaseModel> atualizarDatabase(Long id,DatabaseModel databaseModel) {
+	public  Optional<DatabaseModel> buscarPorId(@PathVariable Long id) {
+		
+			Optional<DatabaseModel> database = databasesRepository.findById(id);	
+			if (database.isPresent()) {
+				return database;
+			}
+			return null;		
+	}
+	
+	public List<DatabaseModel> listAll() {
+		
+		List<DatabaseModel> databases = databasesRepository.findAll();	
+		
+		if (databases !=null) {
+			return databases;
+		}else {
+			return null;
+		}
+	}
+
+	public DatabaseModel atualizarDatabase(Long id,DatabaseModel databaseModel) {
 		
 		try {
-			Optional<DatabaseModel> databaseAtual = databasesRepository.findById(id);
+			@SuppressWarnings("deprecation")
+			DatabaseModel databaseAtual = databasesRepository.getById(id);
 			
-			if(databaseAtual.isPresent()) {
-				databaseModel.setAud_dh_alteracao(LocalDateTime.now());
+			if(databaseAtual !=null) {
+				databaseAtual.setAud_dh_alteracao(LocalDateTime.now());
+				BeanUtils.copyProperties(databaseModel, databaseAtual, "i_databases","aud_dh_criacao");
+				databaseAtual = databasesRepository.save(databaseAtual);
 				
 				return databaseAtual;
 			}
 
 			return null;
-		} catch (EmptyResultDataAccessException e) {
+		} catch (EntityNotFoundException e) {
 			throw new RecursoNaoLocalizado(
 				String.format("Não existe um cadastro de Database com código %d", id));
 		} 
